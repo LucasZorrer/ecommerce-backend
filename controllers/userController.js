@@ -1,34 +1,28 @@
-const yup = require("yup");
+// controllers/userController.js
+const User = require('../models/user');
 
-const UserController = {
-  async createUser(req, res) {
-    const userData = req.body;
-    const schema = yup.object().shape({
-      password: yup
-        .string("Enter a password.")
-        .required("Enter a password.")
-        .min(6, "Make a stronger password."),
-      email: yup
-        .string("Enter your email.")
-        .required("Enter your email.")
-        .email("Enter a valid email."),
-      name: yup
-        .string("Enter your name.")
-        .required("Enter your name."),
+// Create a new user
+const createUser = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const user = await User.create({
+      name,
+      email,
+      password,
     });
-
-    try {
-      await schema.validate(userData);
-    } catch (err) {
-      return res.status(400).json({
-        message: err.errors,
-      });
-    }
-
-    res
-      .status(201)
-      .json({ message: "User successfully created", user: userData });
-  },
+    res.status(201).json({
+      message: 'User created successfully',
+      user,
+    });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({
+      message: 'Error creating user',
+      error: error.message,
+    });
+  }
 };
 
-module.exports = UserController;
+module.exports = {
+  createUser,
+};
