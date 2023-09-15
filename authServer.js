@@ -18,7 +18,7 @@ app.post("/token", (req, res) => {
   if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
-    const accessToken = generateAccessToken({ name: user.name });
+    const accessToken = generateAccessToken({ user_id: user.id });
     res.json({ accessToken: accessToken });
   });
 });
@@ -40,7 +40,7 @@ app.post("/login", (req, res) => {
 });
 
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15s" });
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1000s" });
 }
 
 app.listen(4001, () => {

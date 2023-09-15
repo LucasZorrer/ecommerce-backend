@@ -1,8 +1,9 @@
 // controllers/userController.js
 const yup = require("yup");
 const bcrypt = require('bcrypt')
-const User = require("../models/user");
-const Op = require('Sequelize');
+const {User} = require("../models");
+
+console.log(User)
 
 // Create a new user
 const createUser = async (req, res) => {
@@ -42,7 +43,7 @@ const createUser = async (req, res) => {
         errors.push('Email already exists');
       }
 
-      return { success: false, message: errors.join(', ') };
+      res.status(201).json({ success: false, message: errors.join(', ') });
     }
 
     const user = await User.create({

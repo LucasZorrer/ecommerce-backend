@@ -1,16 +1,19 @@
 const express = require("express");
 const app = express();
+const ProductController = require("./controllers/productController");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   res.json("Hello, World!");
 });
 
 app.get("/home", authenticateToken, (req, res) => {
   res.json("Hello, Home!");
 });
+
+app.post("/createProduct", authenticateToken, ProductController.create);
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
