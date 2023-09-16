@@ -3,8 +3,6 @@ const yup = require("yup");
 const bcrypt = require('bcrypt')
 const {User} = require("../models");
 
-console.log(User)
-
 // Create a new user
 const createUser = async (req, res) => {
   try {

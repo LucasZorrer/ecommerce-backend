@@ -19,7 +19,6 @@ if (config.use_env_variable) {
 fs
   .readdirSync(__dirname)
   .filter(file => {
-    console.log(file, basename, file !== basename)
     return (
       file.indexOf('.') !== 0 &&
       file !== basename &&
