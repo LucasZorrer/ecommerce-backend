@@ -16,8 +16,10 @@ app.delete("/logout", (req, res) => {
 
 app.post("/token", (req, res) => {
   const refreshToken = req.body.token;
-  if (refreshToken == null) return res.sendStatus(401);
-  if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
+  if (refreshToken == null)
+    return res.sendStatus(401).json("You are not authenticated!");
+  if (!refreshTokens.includes(refreshToken))
+    return res.sendStatus(403).json("Refresh token is not valid!");
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
     const accessToken = generateAccessToken({ user_id: user.id });
@@ -73,7 +75,7 @@ app.post("/login", async (req, res) => {
 });
 
 function generateAccessToken(user) {
-  return jwt.sign({user}, process.env.ACCESS_TOKEN_SECRET, {
+  return jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "100s",
   });
 }
