@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 const ProductController = require("./controllers/productController");
+const cors = require('cors')
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 app.use(express.json());
+app.use(cors())
 
 app.get("/", (_, res) => {
   res.json("Hello, World!");

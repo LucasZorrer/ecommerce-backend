@@ -6,8 +6,10 @@ const jwt = require("jsonwebtoken");
 const UserController = require("./controllers/userController");
 const { User } = require("./models");
 const bcrypt = require("bcrypt");
+const cors = require("cors");
 
 app.use(express.json());
+app.use(cors());
 
 app.delete("/logout", (req, res) => {
   refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
@@ -74,9 +76,38 @@ app.post("/login", async (req, res) => {
   }
 });
 
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+}
+
+app.get("/user", authenticateToken, async (req, res) => {
+  console.log(req.user);
+  const userFromServer = await User.findOne({
+    where: {
+      id: req.user.user,
+    },
+  });
+
+  const { id, name, email } = userFromServer;
+  const userData = {
+    id,
+    name,
+    email,
+  };
+  res.json(userData);
+});
+
 function generateAccessToken(user) {
   return jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "100s",
+    expiresIn: "10s",
   });
 }
 
