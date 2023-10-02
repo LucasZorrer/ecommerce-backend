@@ -1,14 +1,13 @@
 // controllers/userController.js
 const yup = require("yup");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
 require("dotenv").config();
 
-
 const refreshToken = async (req, res) => {
   const refreshToken = req.body.token;
-  console.log(refreshToken)
+  console.log(refreshToken);
   if (refreshToken == null)
     return res.sendStatus(401).json("You are not authenticated!");
   if (!refreshTokens.includes(refreshToken))
@@ -23,7 +22,7 @@ const refreshToken = async (req, res) => {
     const accessToken = generateAccessToken(user);
     res.json({ accessToken: accessToken });
   });
-}
+};
 
 // Create a new user
 const createUser = async (req, res) => {
@@ -42,28 +41,26 @@ const createUser = async (req, res) => {
       name: yup.string("Enter your name.").required("Enter your name."),
     });
 
-
-
     await schema.validate(req.body);
-    const hashedPassword = await bcrypt.hash(password, 10)
 
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const existingUser = await User.findOne({
       where: {
-        name
+        name,
       },
     });
 
     if (existingUser) {
       const errors = [];
       if (existingUser.name === name) {
-        errors.push('Username already exists');
+        errors.push("Username already exists");
       }
       if (existingUser.email === email) {
-        errors.push('Email already exists');
+        errors.push("Email already exists");
       }
 
-      res.status(201).json({ success: false, message: errors.join(', ') });
+      res.status(201).json({ success: false, message: errors.join(", ") });
     }
 
     const user = await User.create({
@@ -77,16 +74,15 @@ const createUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating user:", error);
-    res.status(500).json({
-      message: "Error creating user",
-      error: error.message,
+    res.status(201).json({
+      success: false,
+      message: error.message,
     });
   }
 };
 
 let refreshTokens = [];
 const loginUser = async (req, res) => {
-
   const { email, password } = req.body;
   if (email === undefined) {
     res.status(201).json({ success: false, message: "Enter an email" });
@@ -119,7 +115,7 @@ const loginUser = async (req, res) => {
         refreshTokens.push(refreshToken);
         res.status(201).json({
           success: true,
-          message: "Successfully Logged",
+          message: "User Successfully Created",
           accessToken: accessToken,
           refreshToken: refreshToken,
         });
@@ -130,15 +126,15 @@ const loginUser = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 const logout = async (req, res) => {
   refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
-  res.json({ success: true, message: "Logout Successfully done"}).status(204);
-}
+  res.json({ success: true, message: "Logout Successfully done" }).status(204);
+};
 
 const getUserData = async (req, res) => {
-  console.log(req.user)
+  console.log(req.user);
   const userFromServer = await User.findOne({
     where: {
       id: req.user.user,
@@ -152,7 +148,7 @@ const getUserData = async (req, res) => {
     email,
   };
   res.json(userData);
-}
+};
 
 function generateAccessToken(user) {
   return jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
@@ -165,5 +161,5 @@ module.exports = {
   loginUser,
   getUserData,
   refreshToken,
-  logout
+  logout,
 };
