@@ -64,7 +64,27 @@ const listAll = async (req, res) => {
   }
 };
 
+const listProduct = async (req, res) => {
+  console.log(req.params);
+  try {
+    const product = await Product.findOne({
+      where: {
+        id: req.params.productId,
+      },
+    });
+
+    if (product) {
+      res.status(200).json({ success: true, product });
+    } else {
+      res.status(200).json({ success: false, message: "Product Not Found." });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   create,
   listAll,
+  listProduct,
 };

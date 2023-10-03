@@ -17,6 +17,7 @@ app.get("/home", authenticateToken, (req, res) => {
 
 app.post("/createProduct", authenticateToken, ProductController.create);
 app.get("/listProducts", ProductController.listAll);
+app.get("/listProducts/:productId", ProductController.listProduct);
 
 app.listen(4000, () => {
   console.log("Main server is running.");
