@@ -1,5 +1,5 @@
 const yup = require("yup");
-const { Product } = require("../models");
+const { Product, Category } = require("../models");
 
 const create = async (req, res) => {
   try {
@@ -83,8 +83,19 @@ const listProduct = async (req, res) => {
   }
 };
 
+const getCategories = async (req, res) => {
+  try {
+    const categories = await Category.findAll({ attributes: ["id", "name"] });
+
+    res.json({ success: true, categories });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   create,
   listAll,
   listProduct,
+  getCategories,
 };

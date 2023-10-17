@@ -33,6 +33,7 @@ app.get("/home", authenticateToken, (req, res) => {
 });
 
 app.post("/createProduct", authenticateToken, ProductController.create);
+app.get("/getCategories", ProductController.getCategories)
 app.get("/listProducts", ProductController.listAll);
 app.get("/listProducts/:productId", ProductController.listProduct);
 
