@@ -21,16 +21,18 @@ const create = async (req, res) => {
         .number("Enter how many products that you have.")
         .required("Enter how many products that you have."),
     });
-
     await schema.validate(req.body);
+
+    const imagePath = req.file.path;
 
     const createdProduct = await Product.create({
       name,
       description,
-      price,
+      price: parseFloat(price),
       category_id,
       quantity,
       user_id: req.user.user,
+      image: imagePath,
     });
     res.status(201).json({
       success: true,
@@ -40,7 +42,7 @@ const create = async (req, res) => {
   } catch (error) {
     res.status(201).json({
       success: false,
-      message: error.message,
+      message: "Complete all the fields",
     });
   }
 };
@@ -65,7 +67,6 @@ const listAll = async (req, res) => {
 };
 
 const listProduct = async (req, res) => {
-  console.log(req.params);
   try {
     const product = await Product.findOne({
       where: {
@@ -93,9 +94,27 @@ const getCategories = async (req, res) => {
   }
 };
 
+const listPersonalProducts = async (req, res) => {
+  try {
+    const products = await Product.findAll({
+      where: {
+        user_id: req.params.seller_id,
+      },
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+    });
+
+    res.json({ success: true, products });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   create,
   listAll,
   listProduct,
   getCategories,
+  listPersonalProducts,
 };

@@ -17,12 +17,15 @@ const storage = multer.diskStorage({
   },
 
   filename: (req, file, cb) => {
-    console.log(file);
-    cb(null, Date.now() + path.extname(file.originalname));
+    const originalExt = path.extname(file.originalname);
+    cb(null, Date.now() + originalExt);
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  preservePath: true, // Preserve the original file extension
+});
 
 app.get("/", (_, res) => {
   res.json("Hello, World!");
@@ -32,16 +35,19 @@ app.get("/home", authenticateToken, (req, res) => {
   res.json("Hello, Home!");
 });
 
-app.post("/createProduct", authenticateToken, ProductController.create);
-app.get("/getCategories", ProductController.getCategories)
+app.post(
+  "/createProduct",
+  authenticateToken,
+  upload.single("image"),
+  ProductController.create
+);
+app.get("/getCategories", ProductController.getCategories);
 app.get("/listProducts", ProductController.listAll);
 app.get("/listProducts/:productId", ProductController.listProduct);
-
-//EXAMPLE USING MIDDLEWARE OF MULTER. REMEMBER THAT THE NAME OF INPUT MUST BE THE SAME OF THE UPLOAD.SINGLE
-app.post("/upload", upload.single("image"), (req, res) => {
-  res.send("IMAGE UPLOADED");
-});
-
+app.get(
+  "/listPersonalProducts/:seller_id",
+  ProductController.listPersonalProducts
+);
 app.listen(4000, () => {
   console.log("Main server is running.");
 });

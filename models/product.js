@@ -22,12 +22,17 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       price: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.INTEGER,
         allowNull: false,
         unique: true,
       },
       category_id: {
         type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true,
+      },
+      image: {
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true,
       },
