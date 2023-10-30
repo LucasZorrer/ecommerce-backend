@@ -10,10 +10,11 @@ require("dotenv").config();
 
 app.use(express.json());
 app.use(cors());
+app.use("/productImages", express.static("productImages"));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "Images");
+    cb(null, "productImages");
   },
 
   filename: (req, file, cb) => {
