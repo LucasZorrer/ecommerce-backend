@@ -72,6 +72,9 @@ const listProduct = async (req, res) => {
       where: {
         id: req.params.productId,
       },
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
     });
 
     if (product) {
